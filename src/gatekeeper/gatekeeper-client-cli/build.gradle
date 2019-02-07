@@ -1,0 +1,12 @@
+plugins {
+    id 'application'
+    id 'com.github.sherter.google-java-format'
+}
+
+mainClassName = "com.nordstrom.gatekeeper.ClientCli"
+applicationDefaultJvmArgs = []
+
+dependencies {
+    implementation project(':gatekeeper-client')
+    implementation group: 'io.grpc', name: 'grpc-netty', version: grpc_version
+}

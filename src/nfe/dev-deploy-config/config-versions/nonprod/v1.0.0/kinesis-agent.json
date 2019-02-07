@@ -1,0 +1,12 @@
+{
+  "cloudwatch.emitMetrics": false,
+  "firehose.endpoint": "firehose.us-west-2.amazonaws.com",
+  "assumeRoleARN": "arn:aws:iam::234460336057:role/NFELogsCrossAccountWriter",
+
+  "flows": [
+    {
+      "filePattern": "/var/log/supervisor/nfe-main-stdout.log",
+      "deliveryStream": "nonprod-nfe-logs-stream"
+    }
+  ]
+}

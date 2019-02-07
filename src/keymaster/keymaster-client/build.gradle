@@ -1,0 +1,45 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.jfrog.artifactory'
+    //todo: (WK) id 'com.github.sherter.google-java-format'
+}
+
+dependencies {
+    /* Keymaster gRPC */
+    api group: 'com.nordstrom.gtm', name: 'keymaster-grpc', version: gtm_grpc_version
+
+    annotationProcessor "org.projectlombok:lombok:$lombok_version"
+    implementation group: 'org.projectlombok', name: 'lombok', version: lombok_version
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId "keymaster-client"
+            version project.version
+            from components.java
+            pom {
+                name = "GTM Keymaster Client Library"
+                description = "This is the GTM Keymaster gRPC Client Library"
+                url = "https://gitlab.yourdomain.com/gtm/keymaster"
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = "https://artifactory.yourdomain.com/artifactory/"
+    publish {
+        repository {
+            repoKey = 'maven-local'
+            username = artifactory_user
+            password = artifactory_api_key
+            maven = true
+        }
+        defaults {
+            publications('maven') //this refers to publishing.publications.maven up above ^^^
+        }
+    }
+}

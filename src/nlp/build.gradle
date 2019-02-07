@@ -1,0 +1,106 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.sherter.google-java-format' version '0.7.1'
+    id 'net.researchgate.release' version '2.6.0'
+    id "com.github.hierynomus.license" version "0.15.0"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+release {
+    tagTemplate = 'v${version}'
+}
+
+allprojects {
+    apply plugin:"java"
+    apply plugin: 'license'
+    license {
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        ext.name = 'Nordstrom, Inc.'
+        header rootProject.file('../../HEADER-LICENSE.txt')
+
+        excludes(["**/*.conf", "**/*.csr", "**/*.crt", "**/*.key", "**/*.pem"])
+    }
+
+    repositories {
+//        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/nordstromoss/oss_maven/' }
+        maven {
+            credentials {
+                username "$artifactory_user"
+                password "$artifactory_api_key"
+            }
+            url = 'https://artifactory.yourdomain.com/artifactory/maven'
+        }
+    }
+
+    googleJavaFormat {
+        exclude '.gradle'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacocoHtml")
+        }
+    }
+
+
+    dependencies {
+        // Mockito
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: mockito_version
+        testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: hamcrest_version
+    }
+}
+
+task verifyArtifactoryConfig {
+    doLast {
+        def userIsSet = !"$artifactory_user".isEmpty()
+        def keyIsSet = !"$artifactory_api_key".isEmpty()
+
+        println (userIsSet ? "artifactory_user is set as : $artifactory_user" : "ERROR user is NOT set" +
+                "please add 'artifactory_user=<user_name>' to your ~/.gradle/gradle.properties")
+
+        println (keyIsSet ? "artifactory_api_key is set : *****" : "artifactory key is NOT set" +
+                "please add 'artifactory_api_key=<key>' to your ~/.gradle/gradle.properties")
+
+        if (!userIsSet || !keyIsSet) {
+            throw new RuntimeException("~/.gradle/gradle.properties is not configured")
+        }
+    }
+}
+
+String gitHash() {
+    def os = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short=8', 'HEAD'
+        standardOutput = os
+    }
+    return os.toString().trim()
+}
+
+String dockerTag() {
+    return "gitlab-registry.yourdomain.com/gtm/nlp:$project.version-git-${gitHash()}"
+}
+
+task dockerK8SBuild(type: Exec, dependsOn: ["nlp-proxy:installDist"]) {
+    executable "docker"
+    args "build", "-f", "k8s-config/Dockerfile", "-t", dockerTag(), "."
+}
+
+// Assumes you have logged in
+// $docker login gitlab-registry.yourdomain.com
+task dockerK8SRelease(type: Exec, dependsOn: ["dockerK8SBuild"]) {
+    executable "docker"
+    args "push", dockerTag()
+}
+
+afterReleaseBuild.dependsOn "dockerK8SRelease"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}

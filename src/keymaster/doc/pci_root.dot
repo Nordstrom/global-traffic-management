@@ -1,0 +1,19 @@
+digraph G {
+
+    node [shape="box"];
+    {
+        node [shape="oval"];
+        PCI_Voucher;
+        PCI_Client;
+        PCI_Server;
+    }
+
+    PCI_Root ->
+    PCI_Intermediate ->
+    PCI_Deployment ->
+    PCI_Voucher;
+    PCI_Intermediate ->
+    PCI_Application -> PCI_Client;
+    PCI_Application -> PCI_Server;
+
+}

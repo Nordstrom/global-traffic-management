@@ -1,0 +1,31 @@
+plugins {
+    id 'application'
+    id 'nebula.ospackage-application' version '4.8.0'
+}
+
+distributions {
+    main {
+        applicationName = "cds"
+    }
+}
+
+mainClassName = "com.nordstrom.cds.Main"
+applicationDefaultJvmArgs = ["-Dcom.sun.management.jmxremote",
+                             "-Dcom.sun.management.jmxremote.host=127.0.0.1",
+                             "-Dcom.sun.management.jmxremote.rmi.host=127.0.0.1",
+                             "-Dcom.sun.management.jmxremote.port=8008",
+                             "-Dcom.sun.management.jmxremote.rmi.port=8008",
+                             "-Dcom.sun.management.jmxremote.local.only=true",
+                             "-Dcom.sun.management.jmxremote.ssl=false",
+                             "-Dcom.sun.management.jmxremote.authenticate=false",
+                             "-Djava.rmi.server.hostname=127.0.0.1"]
+
+ospackage {
+    packageName = 'cds'
+    version = version
+    release = '1'
+
+    requires('supervisor')
+    requires('openjdk-8-jre-headless')
+    requires('ca-certificates-java')
+}

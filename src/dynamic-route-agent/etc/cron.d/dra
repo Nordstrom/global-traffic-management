@@ -1,0 +1,2 @@
+* * * * * root /opt/dynamicrouteagent/dynamicrouteagent.pex --introspect True --route_conf_path /opt/nlp/config/route.json --rds_config_file /opt/dynamicrouteagent/config/rdsconfig.json
+

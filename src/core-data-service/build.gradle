@@ -1,0 +1,94 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'net.researchgate.release' version '2.6.0'
+    id 'com.github.sherter.google-java-format' version '0.7.1'
+    id "com.github.hierynomus.license" version "0.15.0"
+}
+
+allprojects {
+    apply plugin: 'license'
+    license {
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        ext.name = 'Nordstrom, Inc.'
+        header rootProject.file('../../HEADER-LICENSE.txt')
+
+        excludes(["**/*.conf", "**/*.csr", "**/*.crt", "**/*.key", "**/*.pem"])
+    }
+    repositories {
+//        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://dl.bintray.com/nordstromoss/oss_maven/' }
+        maven {
+            credentials {
+                username "$artifactory_user"
+                password "$artifactory_api_key"
+            }
+            url = 'https://artifactory.yourdomain.com/artifactory/maven'
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    dependencies {
+        implementation group: 'com.xjeffrose', name: 'xio', version: xio_version
+        implementation group: 'com.xjeffrose', name: 'xio-zookeeper', version: xio_version
+        implementation group: 'mysql', name: 'mysql-connector-java', version: mysql_version
+        implementation group: 'com.typesafe', name: 'config', version: typesafe_version
+        implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4j_version
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+        implementation group: 'ch.qos.logback', name: 'logback-core', version: logback_version
+
+        implementation group: 'com.nordstrom.gtm', name: 'service-registration-grpc', version: gtm_grpc_version
+        implementation group: 'com.nordstrom.gtm', name: 'service-deploy-target-grpc', version: gtm_grpc_version
+        implementation group: 'com.nordstrom.gtm', name: 'coredb-grpc', version: gtm_grpc_version
+        implementation group: 'com.nordstrom.gtm', name: 'ip-filter-grpc', version: gtm_grpc_version
+
+        testCompile group: 'junit', name: 'junit', version: junit_version
+        testImplementation(group: 'org.mockito', name: 'mockito-core', version: mockito_version)
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacocoHtml")
+        }
+    }
+
+    googleJavaFormat {
+        exclude '.gradle'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}
+
+task verifyArtifactoryConfig {
+  doLast {
+    def userIsSet = !"$artifactory_user".isEmpty()
+    def keyIsSet = !"$artifactory_api_key".isEmpty()
+
+    println (userIsSet ? "artifactory_user is set as : $artifactory_user" : "ERROR user is NOT set" +
+      "please add 'artifactory_user=<user_name>' to your ~/.gradle/gradle.properties")
+
+    println (keyIsSet ? "artifactory_api_key is set : *****" : "artifactory key is NOT set" +
+      "please add 'artifactory_api_key=<key>' to your ~/.gradle/gradle.properties")
+
+    if (!userIsSet || !keyIsSet) {
+      throw new RuntimeException("~/.gradle/gradle.properties is not configured")
+    }
+  }
+}
+
+release {
+    tagTemplate = 'v${version}'
+}

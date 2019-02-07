@@ -1,0 +1,36 @@
+{
+  "AutoScalingGroups":[
+    { "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy1"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy2"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy3"
+        }
+      ]  
+    },
+    { "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy4"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy5"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy6"
+        }
+      ]  
+    }
+
+  ]
+}
+

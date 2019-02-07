@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'com.github.sherter.google-java-format' version '0.7.1'
+    id 'net.researchgate.release' version '2.6.0'
+    id "com.jfrog.artifactory" version "4.7.5"
+    id "com.github.hierynomus.license" version "0.15.0"
+}
+
+release {
+    tagTemplate = 'v${version}'
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'license'
+    license {
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        ext.name = 'Nordstrom, Inc.'
+        header rootProject.file('../../HEADER-LICENSE.txt')
+
+        excludes(["**/*.conf", "**/*.csr", "**/*.crt", "**/*.key", "**/*.pem"])
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+//        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/nordstromoss/oss_maven/' }
+        maven { url = 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release' }
+        maven {
+            credentials {
+                username "$artifactory_user"
+                password "$artifactory_api_key"
+            }
+            url = 'https://artifactory.yourdomain.com/artifactory/maven'
+        }
+    }
+
+    googleJavaFormat {
+        exclude '.gradle'
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination file("${buildDir}/reports/jacocoHtml")
+        }
+    }
+
+    // enable JUnit5
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+
+        // JUnit5
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junit_version
+        testImplementation group: 'org.mockito', name: 'mockito-core', version: mockito_version
+        testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: hamcrest_version
+        testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit_version
+    }
+}
+
+task verifyArtifactoryConfig {
+    doLast {
+        def userIsSet = !"$artifactory_user".isEmpty()
+        def keyIsSet = !"$artifactory_api_key".isEmpty()
+
+        println (userIsSet ? "artifactory_user is set as : $artifactory_user" : "ERROR user is NOT set" +
+                "please add 'artifactory_user=<user_name>' to your ~/.gradle/gradle.properties")
+
+        println (keyIsSet ? "artifactory_api_key is set : *****" : "artifactory key is NOT set" +
+                "please add 'artifactory_api_key=<key>' to your ~/.gradle/gradle.properties")
+
+        if (!userIsSet || !keyIsSet) {
+            throw new RuntimeException("~/.gradle/gradle.properties is not configured")
+        }
+    }
+}
+
+afterReleaseBuild.dependsOn ":artifactoryPublish"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}

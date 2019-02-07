@@ -1,0 +1,12 @@
+[
+  {
+    "name": "health-check",
+    "path": "/health-check/",
+    "client_name": "platform",
+    "port_number": 8000,
+    "tls_enabled": false,
+    "ip_addresses": [
+      "127.0.0.1"
+    ]
+  }
+]

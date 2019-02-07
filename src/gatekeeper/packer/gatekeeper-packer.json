@@ -1,0 +1,31 @@
+{
+  "variables": {
+  "ami_name": "debian-stretch-gatekeeper"
+  },
+  "builders": [
+  {
+    "type": "amazon-ebs",
+    "region": "us-west-2",
+    "source_ami": "ami-e1690799",
+    "instance_type": "t2.micro",
+    "ssh_username": "admin",
+    "vpc_id": "vpc-d274fbab",
+    "subnet_id": "subnet-3a509543",
+    "associate_public_ip_address": "true",
+    "iam_instance_profile": "nfe-bakery-instance-needs-s3-artifact",
+    "ami_name": "{{ user `ami_name` }}-{{ isotime | clean_ami_name }}",
+    "tags": {
+      "os_version": "ubuntu",
+      "built_by": "packer",
+      "build_on": "{{ isotime | clean_ami_name }}",
+      "Name": "{{ user `ami_name` }}"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "/opt/rosco/config/packer/gatekeeper.sh",
+      "pause_before": "30s"
+    }
+  ]
+}

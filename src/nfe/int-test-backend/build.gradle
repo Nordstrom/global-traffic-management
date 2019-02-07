@@ -1,0 +1,20 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+mainClassName = "com.nordstrom.testbackend.Main"
+
+def bootique_version = '0.25'
+
+distributions {
+  main {
+    applicationName = "bootique"
+  }
+}
+
+dependencies {
+  implementation group: 'io.bootique', name: 'bootique', version: bootique_version
+  implementation group: 'io.bootique.jersey', name: 'bootique-jersey', version: bootique_version
+  implementation group: 'io.bootique.logback', name: 'bootique-logback', version: bootique_version
+}

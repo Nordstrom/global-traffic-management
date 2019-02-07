@@ -1,0 +1,4 @@
+rootProject.name = 'nfe'
+include 'nfe-proxy'
+include 'nfe-test-helpers'
+include 'int-test-backend'

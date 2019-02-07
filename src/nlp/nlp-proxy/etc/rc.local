@@ -1,0 +1,39 @@
+#!/bin/sh
+
+GTM_NONPROD_ACCOUNT=234460336057
+MAX_WAIT=60
+
+current_account=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | sed -n '/accountId/s/.*: "\(.*\)".*/\1/p')
+# If CONFIG_VERSION is supplied, will result in "=<version>" e.g. "=0.1.30-1", otherwise will be the empty string
+config_version="=$(curl -s http://169.254.169.254/2007-08-29/user-data | sed -n -e 's/^.*CONFIG_VERSION=//p')"
+if [ "$current_account" = "$GTM_NONPROD_ACCOUNT" ]
+then
+  config_package=nlp-config-nonprod$config_version
+else
+  config_package=nlp-config-prod$config_version
+fi
+
+# Wait for dpkg lock to free up
+count=0
+while fuser /var/lib/dpkg/lock >/dev/null 2>&1
+do
+  # If time limit is reached, exit
+  if [ "$count" = "$MAX_WAIT" ]; then
+      exit 1
+  fi
+  sleep 1
+  count=$(( count + 1 ))
+done
+
+# install nlp-config on first boot
+if ! dpkg -l $config_package &>/dev/null
+then
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get -y update
+  apt-get -y install $config_package
+
+  # remove the line below if you end up using rc.local for
+  # anything more than just install nlp-config
+  [ $? -eq 0 ] && rm /etc/rc.local
+
+fi

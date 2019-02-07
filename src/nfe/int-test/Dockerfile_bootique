@@ -1,0 +1,6 @@
+FROM openjdk:8u171-stretch
+COPY int-test-backend/build/install/bootique /
+COPY int-test/bootique.yml /
+COPY int-test/snakeoil.jks /
+ENV JAVA_OPTS=""
+CMD ["bootique", "--server", "--config=/bootique.yml"]

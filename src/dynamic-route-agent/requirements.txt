@@ -1,0 +1,7 @@
+boto3==1.7.9
+botocore==1.10.9
+python-dateutil==2.7.2
+pex==1.4.1
+requests==2.18.4
+jmespath==0.9.3
+PyMySQL>=0.8.1,<0.9

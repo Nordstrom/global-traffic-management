@@ -1,0 +1,77 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+import "service_deploy_target_models.proto";
+
+package nordstrom.gtm.coredb;
+
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gtm.coredb";
+option java_outer_classname = "CoreDbServiceRegistrationProto";
+
+message PathComponents {
+  string service_version = 1;
+  string organization_unit = 2;
+  string service_name = 3;
+}
+
+message GetNlpRoutingInfoRequest {
+  oneof deployment_platform {
+    string aws_account_id = 1;
+    // string gcp_account_id = 2;
+    // KubernetesInfo { kubernetes_service_name, kubernetes_namespace } kubernetes_info = 3;
+  }
+}
+
+message GetNlpRoutingInfoResponse {
+  repeated PathComponents pathComponentsArray = 1;
+}
+
+message GetServiceDeployTargetInfoRequest {
+  reserved 1;
+
+  string deploy_target_key = 2;
+}
+
+message GetServiceDeployTargetInfoResponse {
+  reserved 2;
+
+  PathComponents pathComponents = 1;
+  .nordstrom.gtm.servicedeploytarget.DeploymentPlatformInfo deployment_platform_info = 5;
+  string service_description = 3;
+  string health_check = 4; // optional
+  bool is_tls_enabled = 6;
+}
+
+service ServiceInfo {
+  rpc GetNlpRoutingInfo (GetNlpRoutingInfoRequest) returns (GetNlpRoutingInfoResponse);
+  rpc GetServiceDeployTargetInfo (GetServiceDeployTargetInfoRequest) returns (GetServiceDeployTargetInfoResponse);
+
+  // ---------- START - K8S work is on hold. If/When this work is started back up, it should be incorporated into GetNlpRoutingInfoRequest.
+  rpc GetKubernetesNlpRoutingInfo (GetKubernetesNlpRoutingInfoRequest) returns (GetKubernetesNlpRoutingInfoResponse);
+  // ---------- END
+}
+
+// ---------- START - K8S work is on hold. If/When this work is started back up, it should be incorporated into GetNlpRoutingInfoRequest.
+message GetKubernetesNlpRoutingInfoRequest {
+  repeated string service_name = 1;
+}
+
+message GetKubernetesNlpRoutingInfoResponse {
+  map<string, PathComponents> pathComponents = 1;
+}
+// ---------- END

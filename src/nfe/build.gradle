@@ -1,0 +1,143 @@
+plugins {
+  id 'java'
+  id 'jacoco'
+  id 'com.github.sherter.google-java-format' version '0.7.1'
+  id 'net.researchgate.release' version '2.6.0'
+  id "com.github.hierynomus.license" version "0.15.0"
+}
+
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'jacoco'
+  apply plugin: 'license'
+  license {
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'Nordstrom, Inc.'
+    header rootProject.file('../../HEADER-LICENSE.txt')
+
+    excludes(["**/*.conf", "**/*.csr", "**/*.crt", "**/*.key", "**/*.pem"])
+  }
+
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  repositories {
+//    mavenLocal()
+    jcenter()
+    maven { url = 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release' }
+    maven {
+      credentials {
+        username "$artifactory_user"
+        password "$artifactory_api_key"
+      }
+      url = 'https://artifactory.yourdomain.com/artifactory/maven'
+    }
+  }
+
+  googleJavaFormat {
+    exclude '.gradle'
+  }
+
+  dependencies {
+    implementation group: 'com.typesafe', name: 'config', version: type_safe_config_version
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4j_version
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: logback_version
+    implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: logstash_encoder_version
+    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovy_version
+    implementation(group: 'com.xjeffrose', name: 'xio', version: xio_version) {
+      exclude(module: 'netty-all')
+      exclude(module: 'netty-tcnative-boringssl-static')
+    }
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: okhttp_version
+    implementation group: 'com.google.guava', name: 'guava', version: guava_version
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: protobuf_version
+    implementation group: 'io.grpc', name: 'grpc-core', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-protobuf', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-stub', version: grpc_version
+    implementation(group: 'io.grpc', name: 'grpc-netty', version: grpc_version) {
+      exclude(module: 'grpc-core')
+      exclude(module: 'netty-codec-http2')
+      exclude(module: 'netty-handler-proxy')
+    }
+    implementation group: 'io.netty', name: 'netty-all', version: netty_version
+    implementation group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: netty_boring_ssl_version
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    implementation group: 'com.gu', name: 'kinesis-logback-appender', version: logback_appender_version
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.5'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombock_version
+
+    // GTM gRPC
+    implementation group: 'com.nordstrom.gtm', name: 'apikey-grpc', version: gtm_grpc_version
+    implementation group: 'com.nordstrom.gtm', name: 'coredb-grpc', version: gtm_grpc_version
+    implementation group: 'com.nordstrom.gtm', name: 'service-registration-grpc', version: gtm_grpc_version
+    implementation group: 'com.nordstrom.gtm', name: 'nlp-deployment-grpc', version: gtm_grpc_version
+    implementation group: 'com.nordstrom.gtm', name: 'service-deployment-grpc', version: gtm_grpc_version
+    implementation group: 'com.nordstrom.gtm', name: 'kubernetes-deployment-grpc', version: gtm_grpc_version
+
+    // MySQL
+    implementation group: 'mysql', name: 'mysql-connector-java', version: "8.0.11"
+
+    // Gatekeeper
+    testImplementation group: 'com.nordstrom.gtm', name: 'gatekeeper-testing', version: gatekeeper_version
+    implementation group: 'com.nordstrom.gtm', name: 'gatekeeper-client', version: gatekeeper_version
+
+    // Testing
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junit_version
+    testRuntime group:'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit_version
+
+    // Mockito
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockito_version
+    testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: hamcrest_version
+
+    // JUnit4 compat
+    testImplementation group: 'junit', name: 'junit', version: "4.12"
+    testRuntime group:'org.junit.vintage', name: 'junit-vintage-engine', version: junit_version
+
+    testImplementation project(':nfe-test-helpers')
+    testImplementation(group: 'org.mockito', name: 'mockito-core', version: mockito_version)
+    testImplementation(group: 'org.apache.curator', name: 'curator-test', version: curator_test_version) {
+      exclude(module: 'zookeeper')
+    }
+  }
+
+  // enable junit 5
+  test {
+    useJUnitPlatform()
+  }
+
+  jacocoTestReport {
+    reports {
+      xml.enabled false
+      csv.enabled false
+      html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+  }
+}
+
+task verifyArtifactoryConfig {
+  doLast {
+    def userIsSet = !"$artifactory_user".isEmpty()
+    def keyIsSet = !"$artifactory_api_key".isEmpty()
+
+    println (userIsSet ? "artifactory_user is set as : $artifactory_user" : "ERROR user is NOT set" +
+      "please add 'artifactory_user=<user_name>' to your ~/.gradle/gradle.properties")
+
+    println (keyIsSet ? "artifactory_api_key is set : *****" : "artifactory key is NOT set" +
+      "please add 'artifactory_api_key=<key>' to your ~/.gradle/gradle.properties")
+
+    if (!userIsSet || !keyIsSet) {
+      throw new RuntimeException("~/.gradle/gradle.properties is not configured")
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8'
+}
+
+release {
+    tagTemplate = 'v${version}'
+}

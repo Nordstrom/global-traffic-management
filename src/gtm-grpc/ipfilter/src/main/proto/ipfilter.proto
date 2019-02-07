@@ -1,0 +1,113 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gtm.ipfilter";
+option java_outer_classname = "IpFilterProto";
+
+package nordstrom.gtm.ipfilter;
+
+/* IpFilter is an object that represents a single filter in a set of filters that applications
+ * can use to either whitelist or blacklist ip address(es) or ranges. One can use the `cidr_network_address`
+ * to specify ranges of ip addresses in the filter.
+ *
+ * - property type: an enumeration that will default to `DENY`
+ * - property cidr_network_address: the way to specify a range of ip addresses
+ * - property is_disabled: an indication of whether or not this filter should be considered
+ * - property notes: notes as to what the filter represents
+ */
+message IpFilter {
+  /*
+   * Used to describe an IpFilter as belonging to a whitelist or blacklist.
+   *
+   * - case DENY: used to block IP addresses in a is_default_allow = true scenario.
+   * - case ALLOW: used to allow IP addresses in a is_default_allow = false scenario.
+   */
+  enum Type {
+    DENY = 0;
+    ALLOW = 1;
+  }
+
+  Type type = 1;
+  string cidr_address = 2;
+  bool is_disabled = 3;
+  string notes = 4;
+}
+
+/* The AddAppIpFilterRequest is intended to be used to add an additional IpFilter to the set
+ * of IpFilters an app currently has assigned.
+ *
+ * - property service_name: the name of the service
+ * - property ip_filter_type: an enumeration that will default to `DENY`
+ * - property cidr_network_address: the way to specify a range of ip addresses
+ * - property is_disabled: an indication of whether or not this filter should be considered
+ * - property notes: notes as to what the filter represents
+ */
+message AddAppIpFilterRequest {
+  string service_name = 1;
+  IpFilter ip_filter = 2;
+}
+
+/*
+ * The AddAppIpFilterResponse contains the IpFilter key that identifies the newly
+ * added filter.
+ *
+ * - property filter_key: the IpFilter key that belongs to the IpFilter
+ */
+message AddAppIpFilterResponse {
+  string ip_filter_key = 1;
+}
+
+/* The RemoveAppIpFilterRequest is intended to be used to remove a particular IpFilter from the set
+ * of IpFilters an app currently has assigned.
+ *
+ * - property service_name: the name of the service
+ * - property filter_key: the IpFilter key that belongs to the IpFilter
+ */
+message RemoveAppIpFilterRequest {
+  string service_name = 1;
+  string ip_filter_key = 2;
+}
+
+/* The ListAppIpFiltersRequest is intended to be used to list all of the IpFilters associated with
+* an app.
+*
+* - property service_name: the name of the service
+*/
+message ListAppIpFiltersRequest {
+  string service_name = 1;
+}
+
+/*
+ * The ListAppIpFiltersResponse contains the list of all IpFilters associated with an app.
+ *
+ * - property ip_filter_key_to_ip_filter: a map of IpFilters where the key is the uniquely identifying key for its respective IpFilter
+ */
+ message ListAppIpFiltersResponse {
+   map<string, IpFilter> ip_filter_key_to_ip_filter = 1;
+ }
+
+/* IpFiltering defines the set of functions that can be used to manipulate an app's associated
+ * IpFilters.
+ */
+service IpFiltering {
+  rpc AddAppIpFilter (AddAppIpFilterRequest) returns (AddAppIpFilterResponse);
+  rpc RemoveAppIpFilter (RemoveAppIpFilterRequest) returns (google.protobuf.Empty);
+  rpc ListAppIpFilters (ListAppIpFiltersRequest) returns (ListAppIpFiltersResponse);
+}

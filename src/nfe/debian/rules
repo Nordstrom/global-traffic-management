@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+export JAVA_HOME=/usr/lib/jvm/default-java
+
+%:
+	dh --with javahelper $@
+
+override_jh_depends:
+	jh_depends -jopen

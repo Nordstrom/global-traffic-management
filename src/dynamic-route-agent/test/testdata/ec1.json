@@ -1,0 +1,52 @@
+{
+  "Reservations":[
+    { "Instances": [
+          {
+            "NetworkInterfaces": [
+                {
+                  "PrivateIpAddress": "1.1.1.1"
+                },
+                {
+                  "PrivateIpAddress": "1.1.1.2"
+                }
+            ]
+          },
+          {
+            "NetworkInterfaces": [
+                {
+                  "PrivateIpAddress": "1.1.1.3"
+                },
+                {
+                  "PrivateIpAddress": "1.1.1.4"
+                }
+            ]
+          }
+       ]  
+    },
+    { "Instances": [
+           {
+              "NetworkInterfaces": [
+                {
+                  "PrivateIpAddress": "1.1.1.5"
+                },
+                {
+                  "PrivateIpAddress": "1.1.1.6"
+                }
+            ]
+          },
+          {
+            "NetworkInterfaces": [
+                {
+                  "PrivateIpAddress": "1.1.1.7"
+                },
+                {
+                  "PrivateIpAddress": "1.1.1.8"
+                }
+            ]
+          }
+
+       ]  
+    }
+  ]
+}
+

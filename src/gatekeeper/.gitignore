@@ -1,0 +1,16 @@
+target/
+lein/
+/classes
+/checkouts
+pom.xml
+pom.xml.asc
+*.class
+/.lein-*
+/.nrepl-port
+.hgignore
+.hg/
+.idea/
+.gradle/
+build/
+out/
+gatekeeper/libs/gatekeeper-clj.jar

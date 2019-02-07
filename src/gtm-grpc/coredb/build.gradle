@@ -1,0 +1,6 @@
+project.artifact_id = 'coredb-grpc'
+
+dependencies {
+  implementation project(":apikey")
+  implementation project(":service-deploy-target")
+}

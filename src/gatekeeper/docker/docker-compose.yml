@@ -1,0 +1,20 @@
+version: "2.1"
+
+services:
+  dynamo:
+    build:
+      context: ./dynamo-local
+    ports:
+      - "8000:8000"
+
+  gatekeeper:
+    build:
+      context: ./gatekeeper
+    ports:
+      - "8080:8080"
+    links:
+      - dynamo
+    environment:
+      - LOCAL_DYNAMO_HOST=dynamo
+      - GATEKEEPER_OPTS="-DGATEKEEPER-ENV=DEV"
+    command: ["/opt/gatekeeper-server/bin/gatekeeper-server", "8080"]

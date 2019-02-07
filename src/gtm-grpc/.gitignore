@@ -1,0 +1,14 @@
+.gradle
+build/
+*.iws
+*.iml
+.idea/
+out/
+*.DS_Store
+*.pyc
+
+# For VSCode
+*.settings
+*.classpath
+*.project
+bin/

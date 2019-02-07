@@ -1,0 +1,6 @@
+FROM openjdk:8u171-stretch
+COPY nfe-proxy/build/install/nfe /
+COPY int-test/application.conf /nfe/
+EXPOSE 8443
+ENV JAVA_OPTS="-DDEBUG -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.host=localhost -Dconfig.file=/nfe/application.conf"
+CMD ["nfe"]

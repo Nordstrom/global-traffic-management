@@ -1,0 +1,6 @@
+{
+  "rds_user": "rds_user",
+  "rds_password": "rds_password",
+  "rds_host": "rds_host",
+  "rds_database": "rds_database"
+}

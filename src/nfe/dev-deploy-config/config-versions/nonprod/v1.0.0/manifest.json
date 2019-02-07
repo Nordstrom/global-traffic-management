@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "name": "api.yourdomain.com.cer.chain1.pem",
+      "dest": "/home/admin/nfe/api.yourdomain.com.cer.chain1.pem"
+    },
+    {
+      "name": "api.yourdomain.com.cer.pem",
+      "dest": "/home/admin/nfe/api.yourdomain.com.cer.pem"
+    },
+    {
+      "name": "api.yourdomain.com.pkcs8.key.pem",
+      "dest": "/home/admin/nfe/api.yourdomain.com.pkcs8.key.pem",
+      "encryption_key": "7fff2ab1-8f38-48e7-ba27-6952e8737129"
+    },
+    {
+      "name": "application.conf",
+      "dest": "/home/admin/nfe/application.conf"
+    },
+    {
+      "name": "kinesis-agent.json",
+      "dest": "/etc/aws-kinesis/agent.json"
+    },
+    {
+      "name": "logback.groovy",
+      "dest": "/home/admin/nfe/logback.groovy"
+    }
+  ]
+}

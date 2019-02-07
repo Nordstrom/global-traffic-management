@@ -1,0 +1,4 @@
+rootProject.name = 'keymaster-parent'
+include 'keymaster-server'
+include 'keymaster-client'
+include 'keymaster-testing'

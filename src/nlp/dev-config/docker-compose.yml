@@ -1,0 +1,19 @@
+version: "2.1"
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 8080:80
+
+  nlp:
+    build:
+      context: ..
+      dockerfile: dev-config/nlp/Dockerfile
+    ports:
+      - 8444:8444
+    environment:
+      - NLP_OPTS="-DNLP-ENV=PROD"
+    links:
+      - nginx

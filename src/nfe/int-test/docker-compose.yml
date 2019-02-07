@@ -1,0 +1,32 @@
+version: "2.1"
+
+services:
+  server.example.com:
+    build:
+      context: ..
+      dockerfile: ./int-test/Dockerfile_bootique
+    ports:
+      - "8444:8444"
+
+  nfe:
+    build:
+      context: ..
+      dockerfile: ./int-test/Dockerfile_nfe
+    ports:
+      - "8443:8443"
+    links:
+      - server.example.com
+
+  datadog:
+    image: datadog/docker-dd-agent:latest-jmx
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    environment:
+      - "API_KEY=${DATADOG_API_KEY}"
+      - SD_BACKEND=docker
+      - NON_LOCAL_TRAFFIC=false
+      - SD_JMX_ENABLE=true
+
+# curl -v --cacert ~/source/xio/xio-core/src/main/resources/snakeoilchain.pem https://server.example.com:8443/api/v1/fives/

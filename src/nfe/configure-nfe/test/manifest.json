@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "name": "sensitive_data",
+      "dest": "/tmp/home/admin/nfe/sensitive_data",
+      "encryption_key": "7fff2ab1-8f38-48e7-ba27-6952e8737129"
+    },
+    {
+      "name": "regular_data",
+      "dest": "/tmp/home/admin/nfe/regular_data"
+    }
+  ]
+}

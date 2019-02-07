@@ -1,0 +1,125 @@
+plugins {
+    id 'java'
+    id 'com.google.protobuf' version '0.8.5'
+    id 'net.researchgate.release' version '2.6.0'
+    id 'com.jfrog.artifactory' version '4.7.5'
+    id "com.github.hierynomus.license" version "0.15.0"
+}
+
+repositories {
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'net.researchgate.release'
+apply plugin: 'license'
+    license {
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        ext.name = 'Nordstrom, Inc.'
+        header rootProject.file('../../HEADER-LICENSE.txt')
+
+        excludes(["**/*.conf", "**/*.csr", "**/*.crt", "**/*.key", "**/*.pem"])
+    }
+
+release {
+    tagTemplate = "v$version"
+}
+
+task verifyArtifactoryConfig {
+    doLast {
+        def userIsSet = !"$artifactory_user".isEmpty()
+        def keyIsSet = !"$artifactory_api_key".isEmpty()
+
+        println (userIsSet ? "artifactory_user is set as : $artifactory_user" : "ERROR user is NOT set" +
+                "please add 'artifactory_user=<user_name>' to your ~/.gradle/gradle.properties")
+
+        println (keyIsSet ? "artifactory_api_key is set : *****" : "artifactory key is NOT set" +
+                "please add 'artifactory_api_key=<key>' to your ~/.gradle/gradle.properties")
+
+        if (!userIsSet || !keyIsSet) {
+            throw new RuntimeException("~/.gradle/gradle.properties is not configured")
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.google.protobuf'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.artifactory'
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        implementation group: 'io.grpc', name: 'grpc-protobuf', version: grpc_version
+        implementation group: 'io.grpc', name: 'grpc-stub', version: grpc_version
+    }
+    ext {
+        generatedSourcePath = "${projectDir}/build/generated/src"
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId project.artifact_id.isEmpty() ? project.name : project.artifact_id
+                groupId 'com.nordstrom.gtm'
+                version project.version
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                name "internal"
+                url "${buildDir}/repos/internal/grpc-maven/public"
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = "https://artifactory.yourdomain.com/artifactory/"
+        publish {
+            repository {
+                repoKey = 'maven-local'
+                username = artifactory_user
+                password = artifactory_api_key
+                maven = true
+            }
+            defaults {
+                publications('maven') //this refers to publishing.publications.maven up above ^^^
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            proto {
+            }
+            java {
+                srcDir "${generatedSourcePath}/main/java"
+            }
+        }
+    }
+
+    protobuf {
+        generatedFilesBaseDir = generatedSourcePath
+        protoc {
+            artifact = 'com.google.protobuf:protoc:3.5.1-1'
+        }
+        plugins {
+            grpc {
+                artifact = "io.grpc:protoc-gen-grpc-java:$grpc_version"
+            }
+        }
+        generateProtoTasks {
+            all()*.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+afterReleaseBuild.dependsOn ":artifactoryPublish"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.7'
+}

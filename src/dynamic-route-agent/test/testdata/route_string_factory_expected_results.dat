@@ -1,0 +1,97 @@
+{
+  routes = [
+    ${nlp.proxyRouteTemplate} {
+      name = route1
+      path = "/path1/"
+      clients = [
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client1"
+         remoteIp = "123.123.123.123"
+         remotePort = port1
+       }
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client1"
+         remoteIp = "123.123.123.124"
+         remotePort = port1
+       }
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client1"
+         remoteIp = "123.123.123.125"
+         remotePort = port1
+       }
+      ]
+    }
+    ${nlp.proxyRouteTemplate} {
+      name = route2
+      path = "/path2/"
+      clients = [
+       ${xio.clientTemplate} {
+         name = "client2"
+         remoteIp = "223.123.123.123"
+         remotePort = port2
+       }
+       ${xio.clientTemplate} {
+         name = "client2"
+         remoteIp = "223.123.123.124"
+         remotePort = port2
+       }
+       ${xio.clientTemplate} {
+         name = "client2"
+         remoteIp = "223.123.123.125"
+         remotePort = port2
+       }
+      ]
+    }
+    ${nlp.proxyRouteTemplate} {
+      name = route3
+      path = "/path3/"
+      clients = [
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client3"
+         remoteIp = "323.123.123.123"
+         remotePort = port3
+       }
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client3"
+         remoteIp = "323.123.123.124"
+         remotePort = port3
+       }
+       ${xio.clientTemplate} {
+         settings {
+           tls {
+             useSsl = false
+           }
+         }
+         name = "client3"
+         remoteIp = "323.123.123.125"
+         remotePort = port3
+       }
+      ]
+    }
+  ]
+}

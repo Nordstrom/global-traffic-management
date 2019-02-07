@@ -1,0 +1,32 @@
+[
+  {
+      "mode": "tagged_asg",
+      "tag_key": "Name",
+      "tag_value": "myTag1",
+      "name": "route1",
+      "path": "/path1/",
+      "client_name": "client1",
+      "port_number": 1234,
+      "tls_enabled": false
+  },
+  {
+      "mode": "tagged_asg",
+      "tag_key": "Name",
+      "tag_value": "myTag2",
+      "name": "route1_green",
+      "path": "/path1/",
+      "client_name": "client_green",
+      "port_number": 1234,
+      "tls_enabled": true
+  },
+  { 
+      "mode": "tagged_asg",
+      "tag_key": "Name",
+      "tag_value": "tag_value3",
+      "name": "route3",
+      "path": "/path3/",
+      "client_name": "client3",
+      "port_number": 1234,
+      "tls_enabled": false
+  }
+]

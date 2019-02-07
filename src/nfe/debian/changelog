@@ -1,0 +1,5 @@
+nfe (0.1.0-SNAPSHOT) stretch; urgency=low
+
+  * Initial Debian Upload (Closes: #NNNNNN)
+
+ -- Chris Keating <Chris.Keating@nordstrom.com>  Sat, 20 Mar 2010 13:26:53 +0000

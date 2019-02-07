@@ -1,0 +1,52 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gtm.kubernetesdeployment";
+option java_outer_classname = "KubernetesDeploymentProto";
+
+package nordstrom.gtm.kubernetesdeployment;
+
+message NodeInfo {
+  message ServiceInfo {
+    string name = 1;
+    uint32 node_pod_count = 2;
+  }
+
+  string node_id = 1;
+  string cluster_id = 2;
+  string region = 3;
+  string node_ip_address = 4;
+  repeated ServiceInfo service_info = 5;
+}
+
+message UpdateNodeInfoResponse {
+  message ServiceInfo {
+    bool is_valid = 1;
+
+    // The below properties should be ignored for invalid services and are required for valid services.
+    bool tls_enabled = 2;
+  }
+
+  map<string, ServiceInfo> service_name_to_service_info = 3;
+}
+
+service KubernetesDeployment {
+  // This is used when a node comes online and when pods (routed to by GTM) change
+  // A pod change in this context, means when a new pod is deployed or when an existing pod goes down
+  rpc UpdateNodeInfo (NodeInfo) returns (UpdateNodeInfoResponse);
+}

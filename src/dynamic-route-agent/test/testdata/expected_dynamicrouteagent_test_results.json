@@ -1,0 +1,119 @@
+[
+  {
+    "client_name": "client1",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "1.2.3.4"
+    ],
+    "mode": "tagged_ec2",
+    "name": "tagged_ec2_1",
+    "tls_enabled": false
+  },
+  {
+    "client_name": "client_green",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "1.2.3.4"
+    ],
+    "mode": "tagged_ec2",
+    "name": "tagged_ec2_2",
+    "tls_enabled": true
+  },
+  {
+    "client_name": "client3",
+    "port_number": 1234,
+    "tag_value": "tag_value3",
+    "path": "\/path3\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "1.2.3.4"
+    ],
+    "mode": "tagged_ec2",
+    "name": "tagged_ec2_3",
+    "tls_enabled": false
+  },
+  {
+    "client_name": "client1",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "2.3.4.5"
+    ],
+    "mode": "tagged_asg",
+    "name": "tagged_asg_1",
+    "tls_enabled": false
+  },
+  {
+    "client_name": "client_green",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "2.3.4.5"
+    ],
+    "mode": "tagged_asg",
+    "name": "tagged_asg_2",
+    "tls_enabled": true
+  },
+  {
+    "client_name": "client3",
+    "port_number": 1234,
+    "tag_value": "tag_value3",
+    "path": "\/path3\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "2.3.4.5"
+    ],
+    "mode": "tagged_asg",
+    "name": "tagged_asg_3",
+    "tls_enabled": false
+  },
+  {
+    "client_name": "client1",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "3.4.5.6"
+    ],
+    "mode": "named_asg",
+    "name": "named_asg_1",
+    "tls_enabled": false
+  },
+  {
+    "client_name": "client_green",
+    "port_number": 1234,
+    "tag_value": "GTM-NLP-234460336057-nonprod",
+    "path": "\/path1\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "3.4.5.6"
+    ],
+    "mode": "named_asg",
+    "name": "named_asg_2",
+    "tls_enabled": true
+  },
+  {
+    "client_name": "client3",
+    "port_number": 1234,
+    "tag_value": "tag_value3",
+    "path": "\/path3\/",
+    "tag_key": "Name",
+    "ip_addresses": [
+      "3.4.5.6"
+    ],
+    "mode": "named_asg",
+    "name": "named_asg_3",
+    "tls_enabled": false
+  }
+]

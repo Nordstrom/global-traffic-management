@@ -1,0 +1,45 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+import "service_registration_models.proto";
+
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gtm.serviceregistration";
+option java_outer_classname = "ServiceRegistrationProto";
+
+package nordstrom.gtm.serviceregistration;
+
+message CreateServiceRegistrationRequest {
+  reserved 1, 4, 5, 8, 9, 11, 12;
+
+  // Used for verification
+  string organization_unit = 2; // The name of the organizational unit (i.e. 'platform', etc.) to which this service belongs. This needs to already exist in GTM.
+
+  // Provides the information for the newly created service.
+  string service_name = 3; // The name of the service.
+  uint32 service_now_id = 6; // The ID associated with ServiceNow. This is supplied by the ServiceNow team.
+  string description = 10; // Optional. Friendly description.
+  bool is_default_allow = 7; // Defaults to false. This specifies the generic case of what services can talk to this one (think white/black lists).
+  AuthType auth_type = 13; // Defaults to 'NONE'. This specifies how each request is authorized.
+}
+
+message CreateServiceRegistrationResponse {
+}
+
+service ServiceRegistration {
+  rpc CreateServiceRegistration (CreateServiceRegistrationRequest) returns (CreateServiceRegistrationResponse);
+}

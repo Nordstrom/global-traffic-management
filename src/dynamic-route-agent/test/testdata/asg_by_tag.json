@@ -1,0 +1,99 @@
+{
+  "AutoScalingGroups":[
+    { 
+      "Tags": [], 
+      "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy1"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy2"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy3"
+        }
+      ]  
+    },
+    { 
+      "Tags": [ 
+        {
+          "Key": "test_key",
+          "Value": "test_value"
+        },
+        {
+          "Key": "random_key",
+          "Value": "random_value"
+        }
+      ],
+      "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy4"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy5"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy6"
+        }
+      ]  
+    },
+    { 
+      "Tags": [ 
+        {
+          "Key": "test_key",
+          "Value": "test_value"
+        },
+        {
+          "Key": "random_key_other",
+          "Value": "random_value_other"
+        }
+      ],
+      "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy7"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy8"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy9"
+        }
+      ]  
+    },
+    { 
+      "Tags": [ 
+        {
+          "Key": "not_test_key",
+          "Value": "not_test_value"
+        },
+        {
+          "Key": "random_key",
+          "Value": "random_value"
+        }
+      ],
+      "Instances": [
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy1"
+        },
+        {
+          "HealthStatus": "NotHealthy",
+          "InstanceId": "NotHealthy2"
+        },
+        {
+          "HealthStatus": "Healthy",
+          "InstanceId": "Healthy3"
+        }
+      ]  
+    }
+  ]
+}

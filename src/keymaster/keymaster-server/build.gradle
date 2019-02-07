@@ -1,0 +1,74 @@
+plugins {
+    id 'application'
+    id 'nebula.ospackage-application' version '4.8.0'
+}
+
+mainClassName = "com.nordstrom.keymaster.Main"
+applicationDefaultJvmArgs = []
+
+task runServer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'com.nordstrom.keymaster.Main'
+    environment("LOCAL_DYNAMO_HOST", "localhost")
+    environment("KEYMASTER-ENV", "DEV")
+
+    // arguments to pass to the application
+    args = ["7777"]
+}
+
+// TODO: (WK) When we build this for production we will need to include the cert chain and key
+// https://docs.gradle.org/current/userguide/application_plugin.html
+// https://docs.gradle.org/current/dsl/org.gradle.api.tasks.Sync.html
+
+dependencies {
+    /* Keymaster gRPC */
+    implementation group: 'com.nordstrom.gtm', name: 'keymaster-grpc', version: gtm_grpc_version
+
+    /* DynamoDb */
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.373'
+
+    /* Logging */
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4j_version
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: logback_version
+    implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: logstash_encoder_version
+    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovy_version
+    annotationProcessor "org.projectlombok:lombok:$lombok_version"
+    implementation group: 'org.projectlombok', name: 'lombok', version: lombok_version
+
+    /* Netty */
+    implementation group: 'io.netty', name: 'netty-all', version: netty_version
+    implementation group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: netty_boring_ssl_version
+    implementation group: 'io.netty', name: 'netty-codec-http', version: netty_version
+    
+    /* Bouncy Castle */
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: bc_version
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: bc_version
+    compile group: 'org.bouncycastle', name: 'bcprov-ext-jdk15on', version: bc_version
+
+    /* gRPC */
+    implementation group: 'com.google.protobuf', name: 'protobuf-java', version: protobuf_version
+    implementation group: 'io.grpc', name: 'grpc-core', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-protobuf', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-stub', version: grpc_version
+    implementation(group: 'io.grpc', name: 'grpc-netty', version: grpc_version) {
+        exclude(module: 'grpc-core')
+        exclude(module: 'netty-codec-http2')
+    }
+
+    /* Test */
+    testImplementation project(":keymaster-testing")
+    testRuntime group:'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit_version
+}
+
+ospackage {
+    packageName = 'keymaster'
+    version = version
+    release = '1'
+
+    requires('supervisor')
+    requires('openjdk-8-jre-headless')
+    requires('ca-certificates-java')
+}

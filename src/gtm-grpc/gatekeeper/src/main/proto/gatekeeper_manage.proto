@@ -1,0 +1,77 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+package nordstrom.gatekeeper;
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gatekeeper.grpc";
+option java_outer_classname = "GatekeeperManageProto";
+
+// List of permissions corresponding to a role or subject
+// id is one of subjectId or roleId
+// permissions is a list of permissions
+message AuthZPermissions {
+  string id = 1;
+  repeated string permissions = 2;
+}
+
+// List of roles corresponding to a subject
+// id is the subjectId
+// roles is a list of roles
+message AuthZRoles {
+  string id = 1;
+  repeated string roles = 2;
+}
+
+// List of permissions and roles corresponding to a subject
+// id the subjectId or roleId
+// permissions is a list of permissions
+message AuthZ {
+  string id = 1;
+  repeated string permissions = 2;
+  repeated string roles = 3;
+}
+
+// The result message of a change request
+message ChangeResult {
+  bool success = 1;
+  string message = 2;
+}
+
+// Identifies a subject or role
+// id is one of subjectId or roleId
+message IdRequest {
+  string id = 1;
+}
+
+// Gatekeeper authz CRUD
+service GatekeeperManagement {
+  rpc createSubjectPermissions (AuthZ) returns (ChangeResult);
+  rpc addSubjectPermissions (AuthZPermissions) returns (ChangeResult);
+  rpc addSubjectRoles (AuthZRoles) returns (ChangeResult);
+  rpc removeSubjectPermissions (AuthZPermissions) returns (ChangeResult);
+  rpc removeSubjectRoles (AuthZRoles) returns (ChangeResult);
+
+  rpc createRolePermissions (AuthZPermissions) returns (ChangeResult);
+  rpc addRolePermissions (AuthZPermissions) returns (ChangeResult);
+  rpc removeRolePermissions (AuthZPermissions) returns (ChangeResult);
+
+  // Get a list of a subject's permission(s) and role(s)
+  rpc listSubjectAuthZ (IdRequest) returns (AuthZ);
+
+  // Get a list of a role's permission(s)
+  rpc listRolePermissions(IdRequest) returns (AuthZPermissions);
+}

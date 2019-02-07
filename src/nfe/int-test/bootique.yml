@@ -1,0 +1,14 @@
+log:
+  level: debug
+
+jetty:
+  connectors:
+    - type: https
+      port: 8444
+      keyStore: "/snakeoil.jks"
+      keyStorePassword: snakeoil
+      certificateAlias: server.example.com
+
+# openssl pkcs12 -export -in ~/source/xio/xio-core/src/main/resources/xio-default-server-certificate-x509.pem -inkey ~/source/xio/xio-core/src/main/resources/xio-default-server-private-key-pkcs8.pem -name server.example.com -out snakeoil.p12
+# keytool -importkeystore -deststorepass snakeoil -destkeystore snakeoil.jks -srckeystore snakeoil.p12 -srcstoretype PKCS12
+# keytool -list -v -keystore snakeoil.jks

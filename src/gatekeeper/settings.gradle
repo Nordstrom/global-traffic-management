@@ -1,0 +1,5 @@
+rootProject.name = 'gatekeeper-parent'
+include 'gatekeeper-server'
+include 'gatekeeper-testing'
+include 'gatekeeper-client'
+include 'gatekeeper-client-cli'

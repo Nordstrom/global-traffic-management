@@ -1,0 +1,55 @@
+/**
+ * Copyright (C) 2018 Nordstrom, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "service_deploy_target_models.proto";
+
+option java_multiple_files = true;
+option java_package = "com.nordstrom.gtm.servicedeploytarget";
+option java_outer_classname = "ServiceDeployTargetProto";
+
+package nordstrom.gtm.servicedeploytarget;
+
+enum Environment {
+  NONPROD = 0;
+  PROD = 1;
+}
+
+message CreateServiceDeployTargetRequest {
+  // Used for verification
+  string service_name = 1;
+
+  // Provides the information for the newly created service deploy target.
+  string service_version = 2; // Optional. The service version. Will be part of the URL path.
+  Environment environment = 3; // Defaults to 'NONPROD'. The environment in which to run the service ('PROD', 'NONPROD')
+  string health_check_path = 4; // Optional. The path used to determine if the service is healthy. If nil, the NLP will use a HEAD call to the root path.
+  bool is_tls_enabled = 5; // Optional. Defaults to false. Determines if the information passed from NLP to service is should be encrypted.
+  DeploymentPlatformInfo deployment_platform_info = 6; // Infomoration associated with where the service will be deployed.
+}
+
+message CreateServiceDeployTargetResponse {
+  string deploy_target_key = 1; // Used to identify a deploy target
+}
+
+message DeleteServiceDeployTargetRequest {
+  string deploy_target_key = 1; // Used to identify a deploy target
+}
+
+service ServiceDeployTarget {
+  rpc CreateServiceDeployTarget (CreateServiceDeployTargetRequest) returns (CreateServiceDeployTargetResponse);
+  rpc DeleteServiceDeployTarget (DeleteServiceDeployTargetRequest) returns (google.protobuf.Empty);
+}

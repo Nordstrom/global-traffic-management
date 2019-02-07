@@ -1,0 +1,11 @@
+[
+  {
+    "name": "route1",
+    "path": "/moocow/",
+    "client_name": "client1",
+    "port_number": 8000,
+    "tls_enabled": false,
+    "ip_addresses": ["127.0.0.1"],
+    "health_check_path": "/healthcheckpath"
+  }
+]

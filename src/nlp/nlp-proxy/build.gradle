@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'application'
+    id 'nebula.ospackage-application' version '4.8.0'
+}
+
+mainClassName = 'com.nordstrom.nlp.Main'
+applicationDefaultJvmArgs = ["-Dcom.sun.management.jmxremote",
+                             "-Dcom.sun.management.jmxremote.host=127.0.0.1",
+                             "-Dcom.sun.management.jmxremote.rmi.host=127.0.0.1",
+                             "-Dcom.sun.management.jmxremote.port=8008",
+                             "-Dcom.sun.management.jmxremote.rmi.port=8008",
+                             "-Dcom.sun.management.jmxremote.local.only=true",
+                             "-Dcom.sun.management.jmxremote.ssl=false",
+                             "-Dcom.sun.management.jmxremote.authenticate=false",
+                             "-Djava.rmi.server.hostname=127.0.0.1"]
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/reports/jacocoHtml")
+    }
+}
+
+distributions {
+    main {
+        applicationName = "nlp"
+    }
+}
+
+dependencies {
+    implementation group: 'com.xjeffrose', name: 'xio', version: xio_version
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: okhttp_version
+    implementation group: 'com.nordstrom.gtm', name: 'nlp-deployment-grpc', version: gtm_grpc_version
+    implementation group: 'io.grpc', name: 'grpc-core', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-protobuf', version: grpc_version
+    implementation group: 'io.grpc', name: 'grpc-stub', version: grpc_version
+    implementation(group: 'io.grpc', name: 'grpc-netty', version: grpc_version) {
+        exclude(module: 'grpc-core')
+        exclude(module: 'netty-codec-http2')
+        exclude(module: 'netty-handler-proxy')
+    }
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.1'
+    implementation group: 'com.gu', name: 'kinesis-logback-appender', version: logback_appender_version
+    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: groovy_version
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+    implementation group: 'ch.qos.logback', name: 'logback-core', version: logback_version
+    implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: logstash_encoder_version
+
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombock_version
+
+    testCompile group: 'com.xjeffrose', name: 'xio-test', version: xio_version
+    testCompile group: 'com.squareup.okhttp3', name: 'mockwebserver', version: mock_webserver_version
+    testCompile group: 'org.projectlombok', name: 'lombok', version: lombock_version
+    testCompile group: 'io.netty', name: 'netty-tcnative-boringssl-static', version: '2.0.7.Final'
+}
+
+ospackage {
+    packageName = 'nlp'
+    version = version
+    release = '1'
+
+    requires('supervisor')
+    requires('openjdk-8-jre-headless')
+    requires('ca-certificates-java')
+    requires('dynamicrouteagent', '0.9.3-1')
+    requires('python-aws-encryption-sdk-cli')
+
+    from('etc') {
+      into '/etc'
+    }
+}

@@ -1,0 +1,8 @@
+.gradle
+build/
+*.iws
+*.iml
+.idea/
+out/
+!gradle-wrapper.jar
+__pycache__/
