@@ -5,7 +5,7 @@ The following people have contributed to the Global Traffic Management project (
 * [Brian Radebaugh](https://github.com/rivukis)
 * [Chris Keating](https://github.com/pdex)
 * Cody Vandermyn
-* David Capino
+* [David Capino](https://github.com/khappucino)
 * Jeff Locher
 * Jeff Rose
 * John Calixto
